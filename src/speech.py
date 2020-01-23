@@ -2,9 +2,10 @@ import speech_recognition
 
 recogniser = speech_recognition.Recognizer()
 
-soundFile = speech_recognition.AudioFile('sound/sound.wav')
-with soundFile as source:
-    audio = recogniser.record(source)
+def speech_to_text(audioFileLocation):
+    soundFile = speech_recognition.AudioFile(audioFileLocation)
+    with soundFile as source:
+        audio = recogniser.record(source)
 
-recogniser.recognize_google(audio)
-
+    output = recogniser.recognize_google(audio)
+    return output
