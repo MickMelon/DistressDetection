@@ -136,6 +136,7 @@ def vad_collector(sample_rate, frame_duration_ms,
     if voiced_frames:
         yield b''.join([f.bytes for f in voiced_frames])
 
+
 def run(param1, param2):
     audio, sample_rate = read_wave(param2)
     vad = webrtcvad.Vad(int(param1))
