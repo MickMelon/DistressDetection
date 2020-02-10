@@ -4,11 +4,15 @@ import repetitive
 import glob
 import random
 import numpy as np
+import librosa
+import pyaudio
+import soundfile
 
 from python_speech_features import mfcc
 from python_speech_features import logfbank
 import scipy.io.wavfile as wav
 from sklearn import svm
+from sklearn.decomposition import PCA
 
 EMOTIONS = ["sad", "happy", "neutral", "fear", "surprise", "disgust"]
 
@@ -42,12 +46,14 @@ def make_sets():
     # Make the set for every emotion
     for emotion in EMOTIONS:
         files = read_data(emotion)
-        files = extract_features(files)
+        files = extract_features2(files)
 
         # Randomise and split the data
         random.shuffle(files)
         training = files[:int(len(files) * 0.8)]
         prediction = files[-int(len(files) * 0.2):]
+
+
 
         # Add the training data and labels to arrays
         for item in training:
@@ -60,6 +66,11 @@ def make_sets():
             prediction_labels.append(EMOTIONS.index(emotion))
 
     print("Sets made. %i training and %i prediction" % (len(training_data), len(prediction_data)))
+
+    print("[+] Number of training samples: ", training_data.shape[0])
+    print("[+] Number of testing samples: ", prediction_data.shape[0])
+    print("[+] Number of features: ", training_data.shape[1])
+
     return training_data, training_labels, prediction_data, prediction_labels
 
 
@@ -69,10 +80,31 @@ def extract_features(data):
         (rate,sig) = wav.read(data[i])
         mfcc_feat = mfcc(sig, rate, nfft=1103)
         fbank_feat = logfbank(sig, rate)
-        data[i] = fbank_feat
+        data[i] = perform_pca(fbank_feat)
 
     print("Features extracted")
     return data
+
+def extract_features2(data):
+    for i in range(len(data)):
+        result = np.array([])
+
+        with soundfile.SoundFile(data[i]) as sound_file:
+            X = sound_file.read(dtype="float32")
+            sample_rate = sound_file.samplerate
+
+            mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate, n_mfcc=40).T, axis=0)
+            result = np.hstack((result, mfccs))
+            data[i] = result
+
+    return data
+
+def perform_pca(features):
+    pca = PCA(n_components=2)
+    pca.fit(features)
+    result = pca.singular_values_.reshape(-1, 1)
+    print(result)
+    return result
 
 # Main
 training_data, training_labels, prediction_data, prediction_labels = make_sets()
