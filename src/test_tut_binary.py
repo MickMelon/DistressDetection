@@ -35,6 +35,18 @@ AVAILABLE_EMOTIONS = {
     "surprised"
 }
 
+DISTRESS_EMOTIONS = {
+    "angry",
+    "sad",
+    "fearful",
+    "surprised"
+}
+
+NON_DISTRESS_EMOTIONS = {
+    "neutral",
+    "happy",
+    "disgust"
+}
 
 def load_data(test_size=0.2):
     X, y = [], []
@@ -50,10 +62,14 @@ def load_data(test_size=0.2):
         features = extract_feature(file, mfcc=True, chroma=True, mel=True)
         # add to data
         X.append(features)
-        y.append(emotion)
+
+        if emotion in DISTRESS_EMOTIONS:
+            y.append(1)
+        else:
+            y.append(0)
+
     # split the data to training and testing and return it
     return train_test_split(np.array(X), y, test_size=test_size, random_state=7)
-
 
 def load_data_english(test_size=0.2):
     X, y = [], []
@@ -62,9 +78,14 @@ def load_data_english(test_size=0.2):
             features = extract_feature(file, mfcc=True, chroma=True, mel=True)
 
             X.append(features)
-            y.append(emotion)
+
+            if emotion in DISTRESS_EMOTIONS:
+                y.append(1)
+            else:
+                y.append(0)
 
     return train_test_split(np.array(X), y, test_size=test_size, random_state=7)
+
 
 def extract_feature(file_name, **kwargs):
     """
