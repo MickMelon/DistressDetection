@@ -58,6 +58,5 @@ def run(text):
 
     backlog.append(processed)
     backlog.remove(backlog[0])
-    print("Backlog 0 is now " + backlog[0])
 
     return similar_occurences

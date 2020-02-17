@@ -1,11 +1,7 @@
-import speech
-import keyword_spotting
-import repetitive
 import glob
 import random
 import numpy as np
 import librosa
-import pyaudio
 import soundfile
 
 from python_speech_features import mfcc

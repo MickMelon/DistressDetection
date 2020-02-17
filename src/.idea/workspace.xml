@@ -30,6 +30,10 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="G:\_Uni\src" />
+      <recent name="G:\_Uni\src\testing" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="G:\_Uni\src" />
     </key>
@@ -47,7 +51,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deepspeech_client.py" />
+      <option name="SCRIPT_NAME" value="G:\_Uni\src\testing\deepspeech_client.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -88,10 +92,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581348810522">
+    <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581953541515">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1581348810522" />
+    <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1581953541515" />
     <state width="1259" height="214" key="GridCell.Tab.0.bottom" timestamp="1580163389393">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

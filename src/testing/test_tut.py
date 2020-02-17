@@ -157,11 +157,12 @@ print("Accuracy: {:.2f}%".format(accuracy*100))
 
 # now we save the model
 # make result directory if doesn't exist yet
-if not os.path.isdir("result"):
-    os.mkdir("result")
+if not os.path.isdir("../result"):
+    os.mkdir("../result")
 
-pickle.dump(model, open("result/mlp_classifier.model", "wb"))
+pickle.dump(model, open("../result/mlp_classifier.model", "wb"))
 
+exit(1)
 # test on diff dataset
 nX_train, nX_test, ny_train, ny_test = load_data(test_size=0.25)
 

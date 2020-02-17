@@ -1,7 +1,7 @@
 import pyaudio
 import wave
-import vad
- 
+from testing import vad
+
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000

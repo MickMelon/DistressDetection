@@ -8,9 +8,13 @@ from sklearn.model_selection import train_test_split # for splitting training an
 from sklearn.neural_network import MLPClassifier # multi-layer perceptron model
 from sklearn.metrics import accuracy_score # to measure how good we are
 
-from sklearn import svm
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.decomposition import PCA
+from enum import Enum
+
+
+class Dataset(Enum):
+    ENGLISH = 0,
+    RAVDESS = 1
+
 
 # all emotions on RAVDESS dataset
 int2emotion = {
@@ -35,20 +39,16 @@ AVAILABLE_EMOTIONS = {
     "surprised"
 }
 
-DISTRESS_EMOTIONS = {
-    "angry",
-    "sad",
-    "fearful",
-    "surprised"
-}
 
-NON_DISTRESS_EMOTIONS = {
-    "neutral",
-    "happy",
-    "disgust"
-}
+def load_data(dataset, test_size=0.2):
+    if dataset == Dataset.ENGLISH:
+        return load_data_english(test_size)
 
-def load_data(test_size=0.2):
+    if dataset == Dataset.RAVDESS:
+        return load_data_ravdess(test_size)
+
+
+def load_data_ravdess(test_size=0.2):
     X, y = [], []
     for file in glob.glob("data/Actor_*/*.wav"):
         # get the base name of the audio file
@@ -62,14 +62,10 @@ def load_data(test_size=0.2):
         features = extract_feature(file, mfcc=True, chroma=True, mel=True)
         # add to data
         X.append(features)
-
-        if emotion in DISTRESS_EMOTIONS:
-            y.append(1)
-        else:
-            y.append(0)
-
+        y.append(emotion)
     # split the data to training and testing and return it
     return train_test_split(np.array(X), y, test_size=test_size, random_state=7)
+
 
 def load_data_english(test_size=0.2):
     X, y = [], []
@@ -78,11 +74,7 @@ def load_data_english(test_size=0.2):
             features = extract_feature(file, mfcc=True, chroma=True, mel=True)
 
             X.append(features)
-
-            if emotion in DISTRESS_EMOTIONS:
-                y.append(1)
-            else:
-                y.append(0)
+            y.append(emotion)
 
     return train_test_split(np.array(X), y, test_size=test_size, random_state=7)
 
@@ -128,68 +120,81 @@ def extract_feature(file_name, **kwargs):
     return result
 
 
-X_train, X_test, y_train, y_test = load_data_english(test_size=0.25)
-# print some details
-# number of samples in training data
-print("[+] Number of training samples:", X_train.shape[0])
-# number of samples in testing data
-print("[+] Number of testing samples:", X_test.shape[0])
-# number of features used
-# this is a vector of features extracted
-# using extract_features() function
-print("[+] Number of features:", X_train.shape[1])
+def run():
+    X_train, X_test, y_train, y_test = load_data(Dataset.ENGLISH, test_size=0.2)
+    model = get_model()
 
-# best model, determined by a grid search
-model_params = {
-    'alpha': 0.01,
-    'batch_size': 256,
-    'epsilon': 1e-08,
-    'hidden_layer_sizes': (300,),
-    'learning_rate': 'adaptive',
-    'max_iter': 500,
-}
+    # predict 25% of data to measure how good we are
+    y_pred = model.predict(X_test)
+    print(y_pred)
 
+    print(" ************** y_pred_proba ***************")
+    y_pred_proba = model.predict_proba(X_test)
+    print(y_pred_proba)
+    print("*********************************************")
 
-# initialize Multi Layer Perceptron classifier
-# with best parameters ( so far )
-model = MLPClassifier(**model_params)
+    # We want to get the 2 highest probs
+    # emotion: value
 
-# train the model
-print("[*] Training the model...")
-model.fit(X_train, y_train)
+    # calculate the accuracy
+    accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
 
-# predict 25% of data to measure how good we are
-y_pred = model.predict(X_test)
-print(y_pred)
+    print("Accuracy: {:.2f}%".format(accuracy*100))
 
-print(" ************** y_pred_proba ***************")
-y_pred_proba = model.predict_proba(X_test)
-print(y_pred_proba)
-print("*********************************************")
+    print("For the first sound clip.....")
+    print(y_pred_proba[0][3])
 
-# We want to get the 2 highest probs
-# emotion: value
+    count = 0
+    available_emotions = list(AVAILABLE_EMOTIONS)
+    for emotion in y_pred_proba[0]:
+        print("Emotion %s predicted %d" % (available_emotions[count], emotion))
+        count = count + 1
 
-# calculate the accuracy
-accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
+    if accuracy > 80:
+        return True
 
-print("Accuracy: {:.2f}%".format(accuracy*100))
+    return False
+
+def save_model(model):
+    # now we save the model
+    # make result directory if doesn't exist yet
+    if not os.path.isdir("../result"):
+        os.mkdir("../result")
+
+    pickle.dump(model, open("../result/mlp_classifier.model", "wb"))
 
 
-# now we save the model
-# make result directory if doesn't exist yet
-if not os.path.isdir("result"):
-    os.mkdir("result")
+def load_model():
+    return pickle.load("../result/mlp_classifier.model")
 
-pickle.dump(model, open("result/mlp_classifier.model", "wb"))
 
-# test on diff dataset
-nX_train, nX_test, ny_train, ny_test = load_data(test_size=0.25)
+def train_model(X_train, y_train):
+    model_params = {
+        'alpha': 0.01,
+        'batch_size': 256,
+        'epsilon': 1e-08,
+        'hidden_layer_sizes': (300,),
+        'learning_rate': 'adaptive',
+        'max_iter': 500,
+    }
 
-new_pred = model.predict(nX_test)
-print(new_pred)
-new_pred_proba = model.predict_proba(nX_test)
+    # initialize Multi Layer Perceptron classifier
+    # with best parameters ( so far )
+    model = MLPClassifier(**model_params)
 
-accuracy = accuracy_score(y_true=ny_test, y_pred=new_pred)
+    # train the model
+    print("[*] Training the model...")
+    model.fit(X_train, y_train)
 
-print("Accuracy: {:.2f}%".format(accuracy*100))
+    save_model(model)
+
+    return model
+
+def get_model():
+    if os.path.exists("../result/mlp_classifier.model"):
+        print("PAth exists")
+        return load_model()
+
+    print("doesnt exist")
+    X_train, X_test, y_train, y_test = load_data(Dataset.ENGLISH, test_size=0.2)
+    return train_model(X_train, y_train)

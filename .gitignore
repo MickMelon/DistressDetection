@@ -5,6 +5,8 @@ venv/
 venv2/
 deepspeech-models/
 
+*.wav
+
 .idea/
 
 # User-specific stuff
