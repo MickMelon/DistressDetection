@@ -4,12 +4,23 @@ import repetitive
 import decision
 import speech
 
-emotion_result = emotion.run()
+from concrete_classes.emotion_classifier_mlp import EmotionClassifierMlp
+from concrete_classes.emotion_classifier_mlp import DatasetName
 
-text = speech.speech_to_text('sound/sound.wav')
+#emotion_result = emotion.run()
 
-kws_result = keyword_spotting.spot_keyword(text)
-rsd_result = repetitive.run(text)
+#text = speech.speech_to_text('sound/sound.wav')
 
-decision_result = decision.make_decision(kws_result, emotion_result, rsd_result, False)
-print(decision_result)
+#kws_result = keyword_spotting.spot_keyword(text)
+#rsd_result = repetitive.run(text)
+
+#decision_result = decision.make_decision(kws_result, emotion_result, rsd_result, False)
+#print(decision_result)
+
+
+
+mlp = EmotionClassifierMlp.from_existing('models/mlp_classifier.model')
+mlp.predict('sound/sound.wav')
+
+mlp = EmotionClassifierMlp.from_new(save_model=True, dataset=DatasetName.English)
+mlp.predict('sound/sound.wav')

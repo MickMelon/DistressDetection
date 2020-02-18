@@ -123,6 +123,7 @@ def extract_feature(file_name, **kwargs):
 def run():
     X_train, X_test, y_train, y_test = load_data(Dataset.RAVDESS, test_size=0.2)
     model = get_model()
+    print("Type is %s" % type(model))
 
     # predict 25% of data to measure how good we are
     y_pred = model.predict(X_test)
