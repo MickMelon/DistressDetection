@@ -9,6 +9,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from base_classes.base_emotion_classifier import EmotionClassifier
 from enum import Enum
+from collections import namedtuple
+
+EmotionClassifierResult = namedtuple("EmotionClassifierResult",
+                                     "highest_name highest_score second_highest_name second_highest_score")
 
 
 class DatasetName(Enum):
@@ -157,9 +161,6 @@ class EmotionClassifierMlp(EmotionClassifier):
             second_highest_emotion = "none"
 
             for emotion in prod:
-                # print("Emotion %s predicted %s (original %s)" % (available_emotions[count], round(emotion * 100, 2), emotion))
-                # print("type is %s " % (type(emotion)))
-
                 current_score = round(emotion * 100, 2)
                 if current_score > highest_score:
                     highest_score = current_score
@@ -174,3 +175,10 @@ class EmotionClassifierMlp(EmotionClassifier):
             print("Predicted %s with a score of %s" % (highest_emotion, str(highest_score)))
             print("Second highest was %s with a score of %s" % (second_highest_emotion, str(second_highest_score)))
             print("***")
+
+        return EmotionClassifierResult(
+            highest_name=highest_emotion,
+            highest_score=highest_score,
+            second_highest_name=second_highest_emotion,
+            second_highest_score=second_highest_score
+        )

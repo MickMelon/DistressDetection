@@ -9,12 +9,9 @@ class RepetitiveSpeechDetectorText(RepetitiveSpeechDetector):
     backlog = []
 
     # Construct with auto filled backlog
-    def __init__(self):
-        self.__fill_backlog()
-
-    # Construct with specified backlog
-    def __init__(self, backlog):
-        self.backlog = backlog
+    def __init__(self, fill_backlog=False):
+        if fill_backlog:
+            self.__fill_backlog()
 
     # Fill the backlog with test data
     def __fill_backlog(self):
@@ -50,8 +47,6 @@ class RepetitiveSpeechDetectorText(RepetitiveSpeechDetector):
 
     # Interface function, checks if the input is a repeat of what has been previously said
     def check(self, input):
-        self.fill_backlog()
-
         processed = self.__remove_stop_words(input)
         print("Processed: " + processed)
         similar_occurences = 0

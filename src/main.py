@@ -5,7 +5,10 @@ import decision
 import speech
 
 from concrete_classes.emotion_classifier_mlp import EmotionClassifierMlp
+from concrete_classes.emotion_classifier_mlp import EmotionClassifierResult
 from concrete_classes.emotion_classifier_mlp import DatasetName
+from concrete_classes.keyword_spotter_text import KeywordSpotterText
+from concrete_classes.repetitive_speech_detector_text import RepetitiveSpeechDetectorText
 
 #emotion_result = emotion.run()
 
@@ -19,8 +22,15 @@ from concrete_classes.emotion_classifier_mlp import DatasetName
 
 
 
-mlp = EmotionClassifierMlp.from_existing('models/mlp_classifier.model')
-mlp.predict('sound/sound.wav')
+emc = EmotionClassifierMlp.from_existing('models/mlp_classifier.model')
+kws = KeywordSpotterText()
+rsd = RepetitiveSpeechDetectorText(fill_backlog=True)
 
-mlp = EmotionClassifierMlp.from_new(save_model=True, dataset=DatasetName.English)
-mlp.predict('sound/sound.wav')
+text = speech.speech_to_text('sound/sound.wav')
+emc_result = emc.predict('sound/sound.wav')
+kws_result = kws.check(text)
+rsd_result = rsd.check(text)
+
+print("Result from EMC:")
+print("I'm %s percent sure it is %s" % (emc_result.highest_score, emc_result.highest_name))
+print("Otherwise I'd be %s percent sure it is %s" % (emc_result.second_highest_score, emc_result.second_highest_name))

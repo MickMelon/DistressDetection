@@ -8,8 +8,7 @@ class KeywordSpotterText(KeywordSpotter):
     def __init__(self):
         keywords = ["background", "depth", "large", "stockings", "john", "keyword", "test", "sell"]
 
-    # Construct a keyword spotter with the specified keywords
-    def __init__(self, keywords):
+    def set_keywords(self, keywords):
         self.keywords = keywords
 
     # Interface to the keyword spotter. Takes in input text and checks if it
