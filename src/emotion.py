@@ -121,7 +121,7 @@ def extract_feature(file_name, **kwargs):
 
 
 def run():
-    X_train, X_test, y_train, y_test = load_data(Dataset.ENGLISH, test_size=0.2)
+    X_train, X_test, y_train, y_test = load_data(Dataset.RAVDESS, test_size=0.2)
     model = get_model()
 
     # predict 25% of data to measure how good we are
@@ -144,11 +144,35 @@ def run():
     print("For the first sound clip.....")
     print(y_pred_proba[0][3])
 
-    count = 0
     available_emotions = list(AVAILABLE_EMOTIONS)
-    for emotion in y_pred_proba[0]:
-        print("Emotion %s predicted %d" % (available_emotions[count], emotion))
-        count = count + 1
+
+
+    for prod in y_pred_proba:
+        count = 0
+        highest_score = 0
+        highest_emotion = "none"
+
+        second_highest_score = 0
+        second_highest_emotion = "none"
+
+        for emotion in prod:
+            # print("Emotion %s predicted %s (original %s)" % (available_emotions[count], round(emotion * 100, 2), emotion))
+            # print("type is %s " % (type(emotion)))
+
+            current_score = round(emotion * 100, 2)
+            if current_score > highest_score:
+                highest_score = current_score
+                highest_emotion = available_emotions[count]
+            elif current_score > second_highest_score:
+                second_highest_score = current_score
+                second_highest_emotion = available_emotions[count]
+
+            count = count + 1
+
+        print("***")
+        print("Predicted %s with a score of %s" % (highest_emotion, str(highest_score)))
+        print("Second highest was %s with a score of %s" % (second_highest_emotion, str(second_highest_score)))
+        print("***")
 
     if accuracy > 80:
         return True
@@ -165,7 +189,7 @@ def save_model(model):
 
 
 def load_model():
-    return pickle.load("../result/mlp_classifier.model")
+    return pickle.load(open("../result/mlp_classifier.model", 'rb'))
 
 
 def train_model(X_train, y_train):
@@ -191,10 +215,10 @@ def train_model(X_train, y_train):
     return model
 
 def get_model():
-    if os.path.exists("../result/mlp_classifier.model"):
-        print("PAth exists")
-        return load_model()
+    #if os.path.exists("../result/mlp_classifier.model"):
+    #    print("PAth exists")
+    #    return load_model()
 
     print("doesnt exist")
-    X_train, X_test, y_train, y_test = load_data(Dataset.ENGLISH, test_size=0.2)
+    X_train, X_test, y_train, y_test = load_data(Dataset.RAVDESS, test_size=0.2)
     return train_model(X_train, y_train)
