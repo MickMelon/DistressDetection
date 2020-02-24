@@ -92,6 +92,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="552" y="179" key="#Notifications" timestamp="1582572895662">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="179" key="#Notifications/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582572895662" />
     <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581953541515">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -120,9 +124,13 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="240" key="SettingsEditor/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1579788212829" />
-    <state x="-1280" y="50" width="1296" height="844" maximized="true" key="dock-window-1" timestamp="1582041451402">
+    <state x="618" y="200" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1582556034331">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="618" y="200" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582556034331" />
+    <state x="-1280" y="50" width="1296" height="844" maximized="true" key="dock-window-1" timestamp="1582295988146">
       <screen x="-1280" y="50" width="1280" height="984" />
     </state>
-    <state x="-1280" y="50" width="1296" height="844" maximized="true" key="dock-window-1/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582041451402" />
+    <state x="-1280" y="50" width="1296" height="844" maximized="true" key="dock-window-1/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582295988146" />
   </component>
 </project>

@@ -6,7 +6,10 @@ import os
 import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
+from sklearn import svm
+from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import accuracy_score
+from sklearn.ensemble import AdaBoostClassifier
 from base_classes.base_emotion_classifier import EmotionClassifier
 from enum import Enum
 from collections import namedtuple
@@ -20,9 +23,15 @@ class DatasetName(Enum):
     Ravdess = 1
 
 
+class ClassifierName(Enum):
+    MLP = 0,
+    SVM = 1,
+    AdaBoost = 2,
+    NN = 3
+
 class EmotionClassifierMlp(EmotionClassifier):
     # The trained MLP classifier model
-    model = MLPClassifier
+
 
     # All the available emotions that may be classified
     AVAILABLE_EMOTIONS = {
@@ -36,20 +45,29 @@ class EmotionClassifierMlp(EmotionClassifier):
     }
 
     @classmethod
-    def from_new(cls, save_model=False, dataset=DatasetName.English):
+    def from_new(cls, save_model=False, dataset=DatasetName.English, classifier=ClassifierName.MLP):
         instance = cls()
 
-        X_train, X_test, y_train, y_test = instance.__load_data(dataset=dataset)
-        model_params = {
-            'alpha': 0.01,
-            'batch_size': 256,
-            'epsilon': 1e-08,
-            'hidden_layer_sizes': (300,),
-            'learning_rate': 'adaptive',
-            'max_iter': 500,
-        }
-        instance.model = MLPClassifier(**model_params)
-        instance.model.fit(X_train, y_train)
+        instance.X_train, instance.X_test, instance.y_train, instance.y_test = instance.__load_data(dataset=dataset)
+
+        if classifier is ClassifierName.SVM:
+            instance.model = svm.SVC()
+        elif classifier is ClassifierName.AdaBoost:
+            instance.model = AdaBoostClassifier(n_estimators=100)
+        elif classifier is ClassifierName.NN:
+            instance.model = NearestNeighbors(n_neighbors=2, algorithm='ball_tree')
+        else: # Default classifier will be MLP
+            if classifier is ClassifierName.MLP:
+                model_params = {
+                    'alpha': 0.01,
+                    'batch_size': 256,
+                    'epsilon': 1e-08,
+                    'hidden_layer_sizes': (300,),
+                    'learning_rate': 'adaptive',
+                    'max_iter': 500,
+                }
+                instance.model = MLPClassifier(**model_params)
+        instance.model.fit(instance.X_train, instance.y_train)
 
         if save_model:
             if not os.path.isdir("models"):
@@ -70,6 +88,7 @@ class EmotionClassifierMlp(EmotionClassifier):
 
     # Loads in the specified dataset
     def __load_data(self, dataset, test_size=0.2):
+        print("What teh fuck????")
         if dataset == DatasetName.English:
             return self.__load_data_english(test_size)
         elif dataset == DatasetName.Ravdess:
@@ -77,8 +96,11 @@ class EmotionClassifierMlp(EmotionClassifier):
 
     # Loads in the English dataset
     def __load_data_english(self, test_size=0.2):
+        print("What teh fuck?wat")
         if not os.path.exists("data_old"):
             raise Exception("Path file English dataset not found")
+
+
 
         X, y = [], []
         for emotion in self.AVAILABLE_EMOTIONS:
@@ -144,8 +166,62 @@ class EmotionClassifierMlp(EmotionClassifier):
                 result = np.hstack((result, tonnetz))
         return result
 
+    def test(self):
+        # predict 25% of data to measure how good we are
+        y_pred = self.model.predict(self.X_test)
+        print(y_pred)
+
+       # print(" ************** y_pred_proba ***************")
+       # y_pred_proba = self.model.predict_proba(self.X_test)
+      #  print(y_pred_proba)
+      #  print("*********************************************")
+
+        # We want to get the 2 highest probs
+        # emotion: value
+
+        # calculate the accuracy
+        accuracy = accuracy_score(y_true=self.y_test, y_pred=y_pred)
+
+        print("Accuracy: {:.2f}%".format(accuracy * 100))
+
+       # print("For the first sound clip.....")
+       # print(y_pred_proba[0][3])
+
+        available_emotions = list(self.AVAILABLE_EMOTIONS)
+
+       # for prod in y_pred_proba:
+       #     count = 0
+       #     highest_score = 0
+        #    highest_emotion = "none"
+#
+       #     second_highest_score = 0
+        #    second_highest_emotion = "none"
+#
+       #     for emotion in prod:
+                # print("Emotion %s predicted %s (original %s)" % (available_emotions[count], round(emotion * 100, 2), emotion))
+                # print("type is %s " % (type(emotion)))
+
+      #          current_score = round(emotion * 100, 2)
+            #    if current_score > highest_score:
+             #       highest_score = current_score
+            #        highest_emotion = available_emotions[count]
+             #   elif current_score > second_highest_score:
+            #        second_highest_score = current_score
+            #        second_highest_emotion = available_emotions[count]
+
+          #      count = count + 1
+
+          #  print("***")
+         #   print("Predicted %s with a score of %s" % (highest_emotion, str(highest_score)))
+          #  print("Second highest was %s with a score of %s" % (second_highest_emotion, str(second_highest_score)))
+          #  print("***")
+
+        return accuracy * 100
+
+
     # Predicts what emotion the input is
     def predict(self, input):
+        print("Predicting...")
         for file in glob.glob(input):
             features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
 

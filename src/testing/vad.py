@@ -148,6 +148,7 @@ def run(param1, param2):
         print(' Writing %s' % (path,))
         write_wave(path, segment, sample_rate)
 
+
 def main(args):
     if len(args) != 2:
         sys.stderr.write(
