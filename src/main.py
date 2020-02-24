@@ -15,7 +15,7 @@ import python_vad
 import threading
 
 print("Starting...")
-
+#speech.speech_to_text('here_7.wav')
 python_vad.start()
 exit(1)
 

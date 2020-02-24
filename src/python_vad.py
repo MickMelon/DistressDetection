@@ -30,6 +30,7 @@ from concrete_classes.emotion_classifier_mlp import DatasetName
 from concrete_classes.emotion_classifier_mlp import ClassifierName
 from concrete_classes.keyword_spotter_text import KeywordSpotterText
 from concrete_classes.repetitive_speech_detector_text import RepetitiveSpeechDetectorText
+import decision
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -88,7 +89,7 @@ def start():
 
             active = vad.is_speech(chunk, RATE)
 
-            sys.stdout.write('1' if active else '_')
+           # sys.stdout.write('1' if active else '_')
             ring_buffer_flags[ring_buffer_index] = 1 if active else 0
             ring_buffer_index += 1
             ring_buffer_index %= NUM_WINDOW_CHUNKS
@@ -162,6 +163,10 @@ def voice_detected(file_name):
 def analyse_speech(file_name):
     print("ANALYSE SPEECH")
     text = speech.speech_to_text(file_name)
+    if text == "":
+        print("No speech detected in voice clip")
+        return
+
     emc_result = emc.predict(file_name)
     kws_result = kws.check(text)
     rsd_result = rsd.check(text)
@@ -170,6 +175,8 @@ def analyse_speech(file_name):
     print("I'm %s percent sure it is %s" % (emc_result.highest_score, emc_result.highest_name))
     print(
         "Otherwise I'd be %s percent sure it is %s" % (emc_result.second_highest_score, emc_result.second_highest_name))
+
+    decision.make_decision(text, kws_result, emc_result, rsd_result)
 
 def write_wave(path, audio, sample_rate):
     """Writes a .wav file.

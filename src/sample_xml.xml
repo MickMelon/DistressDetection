@@ -1,0 +1,26 @@
+<Result>
+    <Timestamp>240220202048</Timestamp>
+    <Text>What are you doing Susie? Can't you see I need help?</Text>
+    <Emc>
+        <FirstEmotion>disgust</FirstEmotion>
+        <FirstScore>95.35</FirstScore>
+        <SecondEmotion>surprise</SecondEmotion>
+        <SecondScore>0.22</SecondScore>
+    </Emc>
+    <Kws>
+        <NoSpotted>2</NoSpotted>
+        <Keywords>
+            <Keyword>Help</Keyword>
+            <Keyword>Susie</Keyword>
+        </Keywords>
+    </Kws>
+    <Rsd>
+        <IsRepeated>true</IsRepeated>
+        <Instances>
+            <Instance>20:47</Instance>
+            <Instance>20:12</Instance>
+            <Instance>20:00</Instance>
+        </Instances>
+    </Rsd>
+    <Decision>mild</Decision>
+</Result>
