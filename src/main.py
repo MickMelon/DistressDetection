@@ -15,7 +15,8 @@ import python_vad
 import threading
 
 print("Starting...")
-#speech.speech_to_text('here_7.wav')
+
+#EmotionClassifierMlp.from_new(True, dataset=DatasetName.English)
 python_vad.start()
 exit(1)
 

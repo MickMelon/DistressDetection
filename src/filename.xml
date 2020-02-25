@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <Result>
-    <Time>1582579526.4098969</Time>
-    <SpokenText>this tutorial described how to find and get current or today's date and time using python time and date time modules including date time</SpokenText>
+    <Time>1582646561.8651302</Time>
+    <SpokenText>good performance</SpokenText>
     <EMC>
-        <FirstEmotion>surprised</FirstEmotion>
-        <FirstScore>98.34</FirstScore>
-        <SecondEmotion>disgust</SecondEmotion>
-        <SecondScore>0.32</SecondScore>
+        <FirstEmotion>sad</FirstEmotion>
+        <FirstScore>100.0</FirstScore>
+        <SecondEmotion>none</SecondEmotion>
+        <SecondScore>0</SecondScore>
     </EMC>
     <KWS>
         <NoSpotted>0</NoSpotted>

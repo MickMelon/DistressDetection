@@ -44,6 +44,13 @@ class EmotionClassifierMlp(EmotionClassifier):
         "surprised"
     }
 
+    DISTRESS_EMOTIONS = {
+        "angry",
+        "sad",
+        "fearful",
+        "disgust"
+    }
+
     @classmethod
     def from_new(cls, save_model=False, dataset=DatasetName.English, classifier=ClassifierName.MLP):
         instance = cls()
@@ -95,19 +102,43 @@ class EmotionClassifierMlp(EmotionClassifier):
             return self.__load_data_ravdess(test_size)
 
     # Loads in the English dataset
-    def __load_data_english(self, test_size=0.2):
+    def __load_data_english(self, test_size=0):
         print("What teh fuck?wat")
         if not os.path.exists("data_old"):
             raise Exception("Path file English dataset not found")
-
-
 
         X, y = [], []
         for emotion in self.AVAILABLE_EMOTIONS:
             for file in glob.glob("data_old/%s/*.wav" % emotion):
                 features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
                 X.append(features)
-                y.append(emotion)
+
+                if emotion in self.DISTRESS_EMOTIONS:
+                    y.append("1")
+                else:
+                    y.append("0")
+
+        int2emotion = {
+            "01": "neutral",
+            "02": "calm",
+            "03": "happy",
+            "04": "sad",
+            "05": "angry",
+            "06": "fearful",
+            "07": "disgust",
+            "08": "surprised"
+        }
+        for file in glob.glob("data/Actor_*/*.wav"):
+            basename = os.path.basename(file)
+            emotion = int2emotion[basename.split("-")[2]]
+            if emotion not in self.AVAILABLE_EMOTIONS:
+                continue
+            features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
+            X.append(features)
+            if emotion in self.DISTRESS_EMOTIONS:
+                y.append("1")
+            else:
+                y.append("0")
 
         return train_test_split(np.array(X), y, test_size=test_size, random_state=7)
 
@@ -218,6 +249,16 @@ class EmotionClassifierMlp(EmotionClassifier):
 
         return accuracy * 100
 
+
+    def predict_binary(self, input):
+        print("Predicting...")
+        for file in glob.glob(input):
+            features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
+
+        proba = self.model.predict(features.reshape(1, -1))
+
+        print(proba)
+        return proba
 
     # Predicts what emotion the input is
     def predict(self, input):

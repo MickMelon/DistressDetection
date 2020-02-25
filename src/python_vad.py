@@ -57,7 +57,7 @@ def start():
                      rate=RATE,
                      input=True,
                      start=False,
-                     # input_device_index=2,
+                     #input_device_index=2,
                      frames_per_buffer=CHUNK_SIZE)
 
     got_a_sentence = False
@@ -167,16 +167,16 @@ def analyse_speech(file_name):
         print("No speech detected in voice clip")
         return
 
-    emc_result = emc.predict(file_name)
+    emc_result = emc.predict_binary(file_name)
     kws_result = kws.check(text)
     rsd_result = rsd.check(text)
 
     print("Result from EMC:")
-    print("I'm %s percent sure it is %s" % (emc_result.highest_score, emc_result.highest_name))
-    print(
-        "Otherwise I'd be %s percent sure it is %s" % (emc_result.second_highest_score, emc_result.second_highest_name))
+    #print("I'm %s percent sure it is %s" % (emc_result.highest_score, emc_result.highest_name))
+   # print(
+    #    "Otherwise I'd be %s percent sure it is %s" % (emc_result.second_highest_score, emc_result.second_highest_name))
 
-    decision.make_decision(text, kws_result, emc_result, rsd_result)
+    #decision.make_decision(text, kws_result, emc_result, rsd_result)
 
 def write_wave(path, audio, sample_rate):
     """Writes a .wav file.
