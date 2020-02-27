@@ -1,7 +1,5 @@
-from base_classes.base_keyword_spotter import KeywordSpotter
-
 # Text based keyword spotter
-class KeywordSpotterText(KeywordSpotter):
+class KeywordSpotterText():
     keywords = []
 
     # Construct a keyword spotter with some test keywords

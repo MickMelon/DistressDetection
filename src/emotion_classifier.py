@@ -10,7 +10,6 @@ from sklearn import svm
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import AdaBoostClassifier
-from base_classes.base_emotion_classifier import EmotionClassifier
 from enum import Enum
 from collections import namedtuple
 
@@ -29,7 +28,7 @@ class ClassifierName(Enum):
     AdaBoost = 2,
     NN = 3
 
-class EmotionClassifierMlp(EmotionClassifier):
+class EmotionClassifierMlp():
     # The trained MLP classifier model
 
 

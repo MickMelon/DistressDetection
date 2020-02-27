@@ -24,13 +24,9 @@ from array import array
 import wave
 import time
 import contextlib
-from concrete_classes.emotion_classifier_mlp import EmotionClassifierMlp
-from concrete_classes.emotion_classifier_mlp import EmotionClassifierResult
-from concrete_classes.emotion_classifier_mlp import DatasetName
-from concrete_classes.emotion_classifier_mlp import ClassifierName
-from concrete_classes.keyword_spotter_text import KeywordSpotterText
-from concrete_classes.repetitive_speech_detector_text import RepetitiveSpeechDetectorText
-import decision
+from emotion_classifier import EmotionClassifierMlp
+from keyword_spotter import KeywordSpotterText
+from repetitive_speech_detector import RepetitiveSpeechDetectorText
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
