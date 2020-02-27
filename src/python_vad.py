@@ -24,9 +24,12 @@ from array import array
 import wave
 import time
 import contextlib
-from emotion_classifier import EmotionClassifierMlp
-from keyword_spotter import KeywordSpotterText
-from repetitive_speech_detector import RepetitiveSpeechDetectorText
+from emotion_classifier import EmotionClassifier
+from keyword_spotter import KeywordSpotter
+from repetitive_speech_detector import RepetitiveSpeechDetector
+import decision
+from decision import DistressScore
+import os
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -43,6 +46,11 @@ NUM_WINDOW_CHUNKS = int(240 / CHUNK_DURATION_MS)
 
 NUM_WINDOW_CHUNKS_END = NUM_WINDOW_CHUNKS * 2
 START_OFFSET = int(NUM_WINDOW_CHUNKS * CHUNK_DURATION_MS * 0.5 * RATE)
+
+emc = EmotionClassifier.from_existing('models/mlp_classifier.model')
+kws = KeywordSpotter()
+rsd = RepetitiveSpeechDetector(fill_backlog=True)
+
 
 def start():
     vad = webrtcvad.Vad(1)
@@ -139,18 +147,11 @@ def start():
     stream.close()
 
 
-emc = EmotionClassifierMlp.from_existing('models/mlp_classifier.model')
-kws = KeywordSpotterText()
-rsd = RepetitiveSpeechDetectorText(fill_backlog=True)
 
-queue = []
-is_analysing = False
+
 
 def voice_detected(file_name):
     print("VOICE DETECTED")
-    if is_analysing:
-        queue.append(file_name)
-        return
 
     t = threading.Thread(target=analyse_speech, args=[file_name])
     t.start()
@@ -167,12 +168,12 @@ def analyse_speech(file_name):
     kws_result = kws.check(text)
     rsd_result = rsd.check(text)
 
-    print("Result from EMC:")
-    #print("I'm %s percent sure it is %s" % (emc_result.highest_score, emc_result.highest_name))
-   # print(
-    #    "Otherwise I'd be %s percent sure it is %s" % (emc_result.second_highest_score, emc_result.second_highest_name))
+    decision_result = decision.make_decision(text, kws_result, emc_result, rsd_result)
+    print(f"The score is {decision_result}")
 
-    #decision.make_decision(text, kws_result, emc_result, rsd_result)
+    if decision_result is DistressScore.NONE:
+        os.remove(file_name)
+
 
 def write_wave(path, audio, sample_rate):
     """Writes a .wav file.

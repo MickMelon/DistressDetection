@@ -13,11 +13,21 @@ class DistressScore(Enum):
 
 
 # Makes a decision on the distress level depending on the params given
-def make_decision(text, number_keywords_spotted, distress_classifier_result, repetitive_speech_detected):
+def make_decision(text,
+                  number_keywords_spotted,
+                  distress_classifier_result,
+                  repetitive_speech_detected):
     # Calculate score
     score = 0
 
     score = score + (number_keywords_spotted * 10)
+
+    if distress_classifier_result.highest_score > 90:
+        score = score + 70
+    elif distress_classifier_result.highest_score > 80:
+        score = score + 60
+    elif distress_classifier_result.highest_score > 60:
+        score = score + 40
 
     if repetitive_speech_detected:
         score = score + 20
@@ -41,10 +51,12 @@ def make_decision(text, number_keywords_spotted, distress_classifier_result, rep
 
 # Saves the decision to an XML file
 def save_decision(result, text, number_keywords_spotted, distress_classifier_result, repetitive_speech_detected):
+    current_time = time.time()
+
     root = etree.Element("Result")
 
     # Time
-    etree.SubElement(root, "Time").text = str(time.time())
+    etree.SubElement(root, "Time").text = str(current_time)
     etree.SubElement(root, "SpokenText").text = text
 
     # Emc
@@ -67,5 +79,5 @@ def save_decision(result, text, number_keywords_spotted, distress_classifier_res
 
     raw = etree.tostring(root, encoding='unicode')
     pretty = xml.dom.minidom.parseString(raw).toprettyxml(indent='    ')
-    with open('decision_output/filename.xml', 'w') as f:
+    with open(f'decision_output/{current_time}.xml', 'w') as f:
         f.write(pretty)

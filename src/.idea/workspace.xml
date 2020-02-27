@@ -28,16 +28,16 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="full.screen.before.presentation.mode" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="G:\_Uni\src" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="G:\_Uni\src\decision_output" />
       <recent name="G:\_Uni\src" />
       <recent name="G:\_Uni\src\testing" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="G:\_Uni\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -93,11 +93,21 @@
     </task>
     <servers />
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="PERFORM_UPDATE_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_COMMIT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_EDIT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
+  </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="179" key="#Notifications" timestamp="1582572895662">
+    <state x="552" y="179" key="#Notifications" timestamp="1582814037298">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="179" key="#Notifications/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582572895662" />
+    <state x="552" y="179" key="#Notifications/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582814037298" />
     <state x="724" y="401" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581953541515">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -122,10 +132,10 @@
     </state>
     <state width="1259" height="214" key="GridCell.Tab.0.right/0.0.1920.1040/-1280.50.1280.984@-1280.50.1280.984" timestamp="1580158435790" />
     <state width="1259" height="214" key="GridCell.Tab.0.right/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1580163389393" />
-    <state x="383" y="182" key="SettingsEditor" timestamp="1582813164086">
+    <state x="383" y="182" key="SettingsEditor" timestamp="1582814089957">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="383" y="182" key="SettingsEditor/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582813164086" />
+    <state x="383" y="182" key="SettingsEditor/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582814089957" />
     <state x="618" y="200" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1582556034331">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

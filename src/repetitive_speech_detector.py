@@ -1,11 +1,10 @@
 import difflib
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from base_classes.base_repetitive_speech_detector import RepetitiveSpeechDetector
 
 
 # Text based repetitive speech detector
-class RepetitiveSpeechDetectorText(RepetitiveSpeechDetector):
+class RepetitiveSpeechDetector:
     backlog = []
 
     # Construct with auto filled backlog

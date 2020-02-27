@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582827883.845542</Time>
+    <SpokenText>plus equals in Python</SpokenText>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>69.54</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>30.46</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>0</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.NONE</Decision>
+</Result>

@@ -17,21 +17,22 @@ EmotionClassifierResult = namedtuple("EmotionClassifierResult",
                                      "highest_name highest_score second_highest_name second_highest_score")
 
 
+# The name of the dataset
 class DatasetName(Enum):
     English = 0,
     Ravdess = 1
 
 
+# The name of the classifier
 class ClassifierName(Enum):
     MLP = 0,
     SVM = 1,
     AdaBoost = 2,
     NN = 3
 
-class EmotionClassifierMlp():
-    # The trained MLP classifier model
 
-
+# The emotion classifier implementation class
+class EmotionClassifier:
     # All the available emotions that may be classified
     AVAILABLE_EMOTIONS = {
         "angry",
@@ -43,6 +44,7 @@ class EmotionClassifierMlp():
         "surprised"
     }
 
+    # All the emotions that would be related to distress
     DISTRESS_EMOTIONS = {
         "angry",
         "sad",
@@ -50,6 +52,7 @@ class EmotionClassifierMlp():
         "disgust"
     }
 
+    # Trains a new model with the specified dataset and classifier
     @classmethod
     def from_new(cls, save_model=False, dataset=DatasetName.English, classifier=ClassifierName.MLP):
         instance = cls()
@@ -82,6 +85,7 @@ class EmotionClassifierMlp():
 
         return instance
 
+    # Creates an EmotionClassifier object from an existing model
     @classmethod
     def from_existing(cls, model_file_path):
         instance = cls()
@@ -254,10 +258,17 @@ class EmotionClassifierMlp():
         for file in glob.glob(input):
             features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
 
-        proba = self.model.predict(features.reshape(1, -1))
+        proba = self.model.predict_proba(features.reshape(1, -1))
 
-        print(proba)
-        return proba
+        distress_score = round(proba[0][0] * 100, 2)
+        no_distress_score = round(proba[0][1] * 100, 2)
+
+        return EmotionClassifierResult(
+            highest_name="distress",
+            highest_score=distress_score,
+            second_highest_name="no distress",
+            second_highest_score=no_distress_score
+        )
 
     # Predicts what emotion the input is
     def predict(self, input):
