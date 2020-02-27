@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582828663.3763614</Time>
+    <SpokenText>received them fit how would you like to suck my balls Mr Garrison</SpokenText>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>7.44</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>92.56</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>0</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.NONE</Decision>
+</Result>

@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582828786.0125775</Time>
+    <SpokenText>I like a f******</SpokenText>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>3.04</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>96.96</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>0</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.NONE</Decision>
+</Result>

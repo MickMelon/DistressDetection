@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582828767.4449587</Time>
+    <SpokenText>virtuous m************ Mega</SpokenText>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>67.03</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>32.97</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>0</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.NONE</Decision>
+</Result>

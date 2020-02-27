@@ -42,7 +42,6 @@ NUM_PADDING_CHUNKS = int(PADDING_DURATION_MS / CHUNK_DURATION_MS)
 
 # --- Steve Cox
 NUM_WINDOW_CHUNKS = int(240 / CHUNK_DURATION_MS)
-# NUM_WINDOW_CHUNKS = int(400 / CHUNK_DURATION_MS)  # 400 ms/ 30ms  ge
 
 NUM_WINDOW_CHUNKS_END = NUM_WINDOW_CHUNKS * 2
 START_OFFSET = int(NUM_WINDOW_CHUNKS * CHUNK_DURATION_MS * 0.5 * RATE)
@@ -65,7 +64,6 @@ def start():
                      frames_per_buffer=CHUNK_SIZE)
 
     got_a_sentence = False
-    count = 0
     while True:
         ring_buffer = collections.deque(maxlen=NUM_PADDING_CHUNKS)
         triggered = False
@@ -80,7 +78,7 @@ def start():
         raw_data = array('h')
         index = 0
         start_point = 0
-        StartTime = time.time()
+        start_time = time.time()
         print("* recording: ")
         stream.start_stream()
 
@@ -89,7 +87,7 @@ def start():
             # add WangS
             raw_data.extend(array('h', chunk))
             index += CHUNK_SIZE
-            TimeUse = time.time() - StartTime
+            time_use = time.time() - start_time
 
             active = vad.is_speech(chunk, RATE)
 
@@ -116,7 +114,7 @@ def start():
                 ring_buffer.append(chunk)
                 num_unvoiced = NUM_WINDOW_CHUNKS_END - sum(ring_buffer_flags_end)
 
-                if num_unvoiced > 0.90 * NUM_WINDOW_CHUNKS_END or TimeUse > 10:
+                if num_unvoiced > 0.90 * NUM_WINDOW_CHUNKS_END or time_use > 10:
                     sys.stdout.write(' Close ')
                     triggered = False
                     got_a_sentence = True
@@ -138,16 +136,10 @@ def start():
         raw_data = normalize(raw_data)
         wav_data = raw_data[44:len(raw_data)]
 
-        write_wave('here_%s.wav' % str(count), wav_data, RATE)
-        voice_detected('here_%s.wav' % str(count))
-        count = count + 1
-
-
+        write_wave(f'vad_output/{start_time}.wav', wav_data, RATE)
+        voice_detected(f'vad_output/{start_time}.wav')
 
     stream.close()
-
-
-
 
 
 def voice_detected(file_name):
@@ -161,6 +153,7 @@ def analyse_speech(file_name):
     print("ANALYSE SPEECH")
     text = speech.speech_to_text(file_name)
     if text == "":
+        os.remove(file_name)
         print("No speech detected in voice clip")
         return
 
