@@ -60,7 +60,7 @@ def start():
                      rate=RATE,
                      input=True,
                      start=False,
-                     #input_device_index=2,
+                     input_device_index=2,
                      frames_per_buffer=CHUNK_SIZE)
 
     got_a_sentence = False
@@ -143,27 +143,27 @@ def start():
 
 
 def voice_detected(file_name):
-    print("VOICE DETECTED")
-
     t = threading.Thread(target=analyse_speech, args=[file_name])
     t.start()
 
 
 def analyse_speech(file_name):
-    print("ANALYSE SPEECH")
+    kws_result = 0
+    rsd_result = 0
     text = speech.speech_to_text(file_name)
-    if text == "":
-        os.remove(file_name)
-        print("No speech detected in voice clip")
-        return
+
+    if not text == "":
+        kws_result = kws.check(text)
+        rsd_result = rsd.check(text)
+    else:
+        print("No speech detected in voice clip. Skipping KWS and RSD...")
 
     emc_result = emc.predict_binary(file_name)
-    kws_result = kws.check(text)
-    rsd_result = rsd.check(text)
 
     decision_result = decision.make_decision(text, kws_result, emc_result, rsd_result)
     print(f"The score is {decision_result}")
 
+    # Only keep the sound file if distressed was detected
     if decision_result is DistressScore.NONE:
         os.remove(file_name)
 

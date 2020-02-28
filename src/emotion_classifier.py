@@ -47,14 +47,12 @@ class EmotionClassifier:
     # All the emotions that would be related to distress
     DISTRESS_EMOTIONS = {
         "angry",
-        "sad",
         "fearful",
-        "disgust"
     }
 
     # Trains a new model with the specified dataset and classifier
     @classmethod
-    def from_new(cls, save_model=False, dataset=DatasetName.English, classifier=ClassifierName.MLP):
+    def from_new(cls, save_model=True, dataset=DatasetName.English, classifier=ClassifierName.MLP):
         instance = cls()
 
         instance.X_train, instance.X_test, instance.y_train, instance.y_test = instance.__load_data(dataset=dataset)
@@ -252,6 +250,25 @@ class EmotionClassifier:
 
         return accuracy * 100
 
+    def create_test_set(self):
+        X, y = [], []
+        for emotion in self.AVAILABLE_EMOTIONS:
+            for file in glob.glob("data_old/%s/*.wav" % emotion):
+                features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
+                X.append(features)
+
+                if emotion in self.DISTRESS_EMOTIONS:
+                    y.append("1")
+                else:
+                    y.append("0")
+
+        return X, y
+
+    def predict_set(self, X_test, y_test):
+        y_pred = self.model.predict(X_test)
+        accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
+        print("Accuracy: {:.2f}%".format(accuracy * 100))
+
 
     def predict_binary(self, input):
         print("Predicting...")
@@ -262,6 +279,8 @@ class EmotionClassifier:
 
         distress_score = round(proba[0][0] * 100, 2)
         no_distress_score = round(proba[0][1] * 100, 2)
+
+        print(f"Distress score is {distress_score} and no-distress score is {no_distress_score}")
 
         return EmotionClassifierResult(
             highest_name="distress",

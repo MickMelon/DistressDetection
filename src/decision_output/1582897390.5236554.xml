@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582897390.5236554</Time>
+    <SpokenText/>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>60.87</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>39.13</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>0</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.NONE</Decision>
+</Result>

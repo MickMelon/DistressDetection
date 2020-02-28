@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<Result>
+    <Time>1582895020.898851</Time>
+    <SpokenText>hello there how are you</SpokenText>
+    <EMC>
+        <FirstEmotion>distress</FirstEmotion>
+        <FirstScore>100.0</FirstScore>
+        <SecondEmotion>no distress</SecondEmotion>
+        <SecondScore>0.0</SecondScore>
+    </EMC>
+    <KWS>
+        <NoSpotted>0</NoSpotted>
+    </KWS>
+    <RSD>
+        <IsRepeated>1</IsRepeated>
+    </RSD>
+    <Decision>DistressScore.LOW</Decision>
+</Result>

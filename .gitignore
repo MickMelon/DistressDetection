@@ -6,7 +6,7 @@ venv2/
 deepspeech-models/
 
 *.wav
-
+decision_output/
 .idea/
 
 # User-specific stuff
