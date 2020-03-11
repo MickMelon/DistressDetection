@@ -31,13 +31,13 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="G:\_Uni\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="G:\_Uni\src\decision_output" />
       <recent name="G:\_Uni\src" />
       <recent name="G:\_Uni\src\testing" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="G:\_Uni\src" />
     </key>
   </component>
   <component name="RunManager">

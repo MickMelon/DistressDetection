@@ -1,6 +1,7 @@
 import difflib
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 
 # Text based repetitive speech detector
@@ -38,24 +39,40 @@ class RepetitiveSpeechDetector:
 
         return final
 
-    # Check if two sentences are similar
-    def __is_similar(self, sentence1, sentence2):
-        seq = difflib.SequenceMatcher(None, sentence1.lower(), sentence2.lower())
-        d = seq.ratio() * 100
-        return d > 80
-
     # Interface function, checks if the input is a repeat of what has been previously said
     def check(self, input):
         processed = self.__remove_stop_words(input)
+        processed_words = processed.split()
         print("Processed: " + processed)
-        similar_occurences = 0
 
+        matching_sentences = 0
+
+        # Compare input with each item in backlog
         for i in range(len(self.backlog)):
-            if processed in self.backlog[i]:
-                similar_occurences += 1
-                print("Found similar text (" + processed + ") and (" + self.backlog[i] + ")")
+            matching_words = 0
+            non_matching_words = 0
+            backlog_item_words = self.backlog[i].split()
+            sentence_size_diff = len(processed_words) - len(backlog_item_words)
+
+            # Loop through each word in the backlog item
+            for i in range(len(backlog_item_words)):
+                backlog_word = backlog_item_words[i]
+                # Check if backlog item word matches any input words
+                if backlog_word in processed_words:
+                    matching_words += 1
+                else:
+                    non_matching_words += 1
+
+            # If 80% of words match, it is a matching sentence
+            per = matching_words * (100/len(backlog_item_words))
+            print(f"Percentage is {per}")
+
+            if per > 80:
+                matching_sentences += 1
+
+        # Get the sentence size diff
 
         self.backlog.append(processed)
         self.backlog.remove(self.backlog[0])
 
-        return similar_occurences
+        return matching_sentences
