@@ -46,7 +46,7 @@ def test_classifiers():
 
 def test_rsd():
     rsd = RepetitiveSpeechDetector()
-    result = rsd.check("The first three are not sentences because they do not contain a verb")
+    result = rsd.check("He was running and eating at same time. He has bad habit of swimming after playing long hours in the Sun.")
     print(f'Result {result}')
 
 

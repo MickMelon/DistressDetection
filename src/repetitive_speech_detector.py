@@ -1,4 +1,5 @@
 import difflib
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -29,8 +30,8 @@ class RepetitiveSpeechDetector:
     # Remove stop words from a piece of text
     def __remove_stop_words(self, text):
         stop_words = set(stopwords.words('english'))
-        tokens = word_tokenize(text)
-        filtered_sentence = [w for w in tokens if not w in stop_words]
+        text_words = nltk.word_tokenize(text)
+        filtered_sentence = [w for w in text_words if not w in stop_words]
 
         final = ''
         for i in range(len(filtered_sentence)):
@@ -39,11 +40,32 @@ class RepetitiveSpeechDetector:
 
         return final
 
+    def __lemmatize(self, text):
+        lemmatizer = WordNetLemmatizer()
+        text_words = nltk.word_tokenize(text)
+        for word in text_words:
+            if word in "?:!.,;":
+                text_words.remove(word)
+
+        lemmatized_words = []
+        for word in text_words:
+            lemmatized_words.append(lemmatizer.lemmatize(word, pos="v"))
+
+        lemmatized_sentence = " ".join(lemmatized_words)
+        return lemmatized_sentence
+
+    def __preprocess(self, text):
+        text = self.__remove_stop_words(text)
+        text = self.__lemmatize(text)
+        return text
+
     # Interface function, checks if the input is a repeat of what has been previously said
     def check(self, input):
-        processed = self.__remove_stop_words(input)
+        processed = self.__preprocess(input)
         processed_words = processed.split()
-        print("Processed: " + processed)
+
+        print(f"Input: {input}")
+        print(f"Processed: {processed}")
 
         matching_sentences = 0
 
@@ -52,7 +74,6 @@ class RepetitiveSpeechDetector:
             matching_words = 0
             non_matching_words = 0
             backlog_item_words = self.backlog[i].split()
-            sentence_size_diff = len(processed_words) - len(backlog_item_words)
 
             # Loop through each word in the backlog item
             for i in range(len(backlog_item_words)):
@@ -69,8 +90,6 @@ class RepetitiveSpeechDetector:
 
             if per > 80:
                 matching_sentences += 1
-
-        # Get the sentence size diff
 
         self.backlog.append(processed)
         self.backlog.remove(self.backlog[0])
