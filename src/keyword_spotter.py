@@ -6,6 +6,7 @@ from distress_score import DistressScore
 KeywordSpotterResult = namedtuple("KeywordSpotterResult",
                                   "distress_score processed_input matching_keywords")
 
+
 # Text based keyword spotter
 class KeywordSpotter:
     keywords = []
@@ -22,6 +23,7 @@ class KeywordSpotter:
         text_words = nltk.word_tokenize(text)
         for word in text_words:
             word = word.lower()
+
             if word in "?:!.,;":
                 text_words.remove(word)
 
@@ -36,28 +38,22 @@ class KeywordSpotter:
 
     # Interface to the keyword spotter. Takes in input text and checks if it
     # contains any of the keywords. Returns the number of keywords spotted.
-    def check(self, input):
-        if input == "":
+    def check(self, text):
+        if text == "":
             return KeywordSpotterResult(
                 distress_score=DistressScore.NONE,
-                processed_input=input,
-                matching_keywords=dict(),
+                processed_input=text,
+                matching_keywords=dict()
             )
 
         word_dict = dict()
-        processed = self.__lemmatize(input)
+        processed = self.__lemmatize(text)
         split_text = processed.lower().split()
         total_spotted = 0
 
-        for i in range(len(self.keywords)):
-            keyword = self.keywords[i]
-
-            if keyword.lower() in split_text:
-                total_spotted += 1
-                if keyword in word_dict:
-                    word_dict[keyword] += 1
-                else:
-                    word_dict[keyword] = 1
+        # Count how many times each keyword appears in the text
+        for keyword in self.keywords:
+            word_dict[keyword] = split_text.count(keyword.lower())
 
         if total_spotted > 5:
             score = DistressScore.HIGH
