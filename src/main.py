@@ -8,7 +8,7 @@ from collections import Counter
 
 
 def train_model():
-    emc = EmotionClassifierBinary.from_new()
+    EmotionClassifierBinary.from_new()
 
 
 def test_model():
@@ -54,7 +54,7 @@ def test_rsd():
 
 def test_kws():
     kws = KeywordSpotter()
-    kws.set_keywords(["scientist", "planet", "star", "telescope", "supernova", "percentage", "put", "world", "observatory", "news"])
+    kws.set_keywords(["cloud", "scientist", "planet", "star", "telescope", "supernova", "percentage", "put", "world", "observatory", "news"])
     testing = ["Astronomers have observed a distant planet where it probably rains iron.",
                "It sounds like a science fiction movie, but this is the nature of some of the extreme worlds we're now discovering.",
                 "Wasp-76b, as it's known, orbits so close in to its host star, its dayside temperatures exceed 2,400C - hot enough to vaporise metals."
@@ -83,13 +83,11 @@ def test_kws():
         # Merge dictionaries
         overall_result = Counter(overall_result) + Counter(result.matching_keywords)
 
-        for res in result.matching_keywords:
-            print("******")
-            print(f'{res}: {result.matching_keywords[res]}')
-            print("******")
-
     for result in overall_result:
         print(f'{result}: {overall_result[result]}')
+
+def test_rsd():
+    rsd = RepetitiveSpeechDetector()
 
 
 print("Starting...")

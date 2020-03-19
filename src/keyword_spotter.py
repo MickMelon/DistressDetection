@@ -1,5 +1,6 @@
 import nltk
 from nltk.stem import WordNetLemmatizer
+from nltk.stem.lancaster import LancasterStemmer
 from collections import namedtuple
 from distress_score import DistressScore
 
@@ -10,6 +11,8 @@ KeywordSpotterResult = namedtuple("KeywordSpotterResult",
 # Text based keyword spotter
 class KeywordSpotter:
     keywords = []
+    lemmatizer = WordNetLemmatizer()
+    stemmer = LancasterStemmer()
 
     # Construct a keyword spotter with some test keywords
     def __init__(self):
@@ -18,23 +21,43 @@ class KeywordSpotter:
     def set_keywords(self, keywords):
         self.keywords = keywords
 
-    def __lemmatize(self, text):
-        lemmatizer = WordNetLemmatizer()
-        text_words = nltk.word_tokenize(text)
-        for word in text_words:
-            word = word.lower()
 
+    def __lemmatize(self, text_words):
+        lemmatized_words = []
+        for word in text_words:
+            word = self.lemmatizer.lemmatize(word, pos="v")
+            lemmatized_words.append(self.lemmatizer.lemmatize(word, pos="v"))
+
+        return lemmatized_words
+
+
+    def __remove_punctuation(self, text_words):
+        for word in text_words:
             if word in "?:!.,;":
                 text_words.remove(word)
 
-        lemmatized_words = []
+        return text_words
+
+
+    def __stem(self, text_words):
+        stemmed_words = []
         for word in text_words:
+            word = self.stemmer.stem(word)
+            stemmed_words.append(word)
 
-            word = lemmatizer.lemmatize(word, pos="v")
-            lemmatized_words.append(lemmatizer.lemmatize(word, pos="v"))
+        return stemmed_words
 
-        lemmatized_sentence = " ".join(lemmatized_words)
-        return lemmatized_sentence
+
+    def __preprocess(self, text):
+        text_words = nltk.word_tokenize(text)
+        text_words = self.__remove_punctuation(text_words)
+        text_words = self.__lemmatize(text_words)
+        #text_words = self.__stem(text_words)
+
+        processed_text = ' '.join(text_words)
+        print(f'Final processed text: {processed_text}')
+        return processed_text
+
 
     # Interface to the keyword spotter. Takes in input text and checks if it
     # contains any of the keywords. Returns the number of keywords spotted.
@@ -47,7 +70,7 @@ class KeywordSpotter:
             )
 
         word_dict = dict()
-        processed = self.__lemmatize(text)
+        processed = self.__preprocess(text)
         split_text = processed.lower().split()
         total_spotted = 0
 
