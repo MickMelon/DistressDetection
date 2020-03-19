@@ -145,5 +145,13 @@
     </state>
     <state x="-1280" y="50" width="1296" height="844" key="dock-window-1/0.0.1920.1040/-1280.50.1280.984@-1280.50.1280.984" timestamp="1582722180678" />
     <state x="-1280" y="50" width="1296" height="844" key="dock-window-1/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1582643644397" />
+    <state x="-844" y="77" width="736" height="909" key="find.popup" timestamp="1584019798395">
+      <screen x="-1280" y="50" width="1280" height="984" />
+    </state>
+    <state x="-844" y="77" width="736" height="909" key="find.popup/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1584019798395" />
+    <state x="547" y="256" width="672" height="678" key="search.everywhere.popup" timestamp="1584621134934">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="547" y="256" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1280.50.1280.984@0.0.1920.1040" timestamp="1584621134934" />
   </component>
 </project>

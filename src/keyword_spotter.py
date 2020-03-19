@@ -1,3 +1,11 @@
+import nltk
+from nltk.stem import WordNetLemmatizer
+from collections import namedtuple
+from distress_score import DistressScore
+
+KeywordSpotterResult = namedtuple("KeywordSpotterResult",
+                                  "distress_score processed_input matching_keywords")
+
 # Text based keyword spotter
 class KeywordSpotter:
     keywords = []
@@ -9,17 +17,59 @@ class KeywordSpotter:
     def set_keywords(self, keywords):
         self.keywords = keywords
 
+    def __lemmatize(self, text):
+        lemmatizer = WordNetLemmatizer()
+        text_words = nltk.word_tokenize(text)
+        for word in text_words:
+            word = word.lower()
+            if word in "?:!.,;":
+                text_words.remove(word)
+
+        lemmatized_words = []
+        for word in text_words:
+
+            word = lemmatizer.lemmatize(word, pos="v")
+            lemmatized_words.append(lemmatizer.lemmatize(word, pos="v"))
+
+        lemmatized_sentence = " ".join(lemmatized_words)
+        return lemmatized_sentence
+
     # Interface to the keyword spotter. Takes in input text and checks if it
     # contains any of the keywords. Returns the number of keywords spotted.
     def check(self, input):
-        print(f'Received input {input}')
-        words_spotted = 0
-        split_text = input.split()
+        if input == "":
+            return KeywordSpotterResult(
+                distress_score=DistressScore.NONE,
+                processed_input=input,
+                matching_keywords=dict(),
+            )
+
+        word_dict = dict()
+        processed = self.__lemmatize(input)
+        split_text = processed.lower().split()
+        total_spotted = 0
 
         for i in range(len(self.keywords)):
-            if self.keywords[i] in split_text:
-                print("Spotted word " + self.keywords[i])
-                words_spotted += 1
+            keyword = self.keywords[i]
 
-        print(f'Words spotted: {words_spotted}')
-        return words_spotted
+            if keyword.lower() in split_text:
+                total_spotted += 1
+                if keyword in word_dict:
+                    word_dict[keyword] += 1
+                else:
+                    word_dict[keyword] = 1
+
+        if total_spotted < 2:
+            score = DistressScore.NONE
+        elif total_spotted < 4:
+            score = DistressScore.LOW
+        elif total_spotted < 6:
+            score = DistressScore.MEDIUM
+        else:
+            score = DistressScore.HIGH
+
+        return KeywordSpotterResult(
+            distress_score=score,
+            processed_input=processed,
+            matching_keywords=word_dict,
+        )

@@ -24,7 +24,8 @@ from array import array
 import wave
 import time
 import contextlib
-from emotion_classifier import EmotionClassifier
+from emotion_classifier_binary import EmotionClassifierBinary
+from distress_score import DistressScore
 from keyword_spotter import KeywordSpotter
 from repetitive_speech_detector import RepetitiveSpeechDetector
 import decision
@@ -46,7 +47,7 @@ NUM_WINDOW_CHUNKS = int(240 / CHUNK_DURATION_MS)
 NUM_WINDOW_CHUNKS_END = NUM_WINDOW_CHUNKS * 2
 START_OFFSET = int(NUM_WINDOW_CHUNKS * CHUNK_DURATION_MS * 0.5 * RATE)
 
-emc = EmotionClassifier.from_existing('models/mlp_classifier.model')
+emc = EmotionClassifierBinary.from_existing('models/mlp_classifier.model')
 kws = KeywordSpotter()
 rsd = RepetitiveSpeechDetector(fill_backlog=True)
 
@@ -60,7 +61,7 @@ def start():
                      rate=RATE,
                      input=True,
                      start=False,
-                     input_device_index=2,
+                    # input_device_index=2,
                      frames_per_buffer=CHUNK_SIZE)
 
     got_a_sentence = False
@@ -148,17 +149,12 @@ def voice_detected(file_name):
 
 
 def analyse_speech(file_name):
-    kws_result = 0
-    rsd_result = 0
     text = speech.speech_to_text(file_name)
 
-    if not text == "":
-        kws_result = kws.check(text)
-        rsd_result = rsd.check(text)
-    else:
-        print("No speech detected in voice clip. Skipping KWS and RSD...")
+    kws_result = kws.check(text)
+    rsd_result = rsd.check(text)
 
-    emc_result = emc.predict_binary(file_name)
+    emc_result = emc.predict(file_name)
 
     decision_result = decision.make_decision(text, kws_result, emc_result, rsd_result)
     print(f"The score is {decision_result}")

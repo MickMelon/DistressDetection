@@ -1,81 +1,103 @@
-from enum import Enum
 import xml.etree.cElementTree as etree
 import xml.dom.minidom
 import time
+from distress_score import DistressScore
+
+from keyword_spotter import KeywordSpotterResult
+from emotion_classifier_binary import EmotionClassifierBinaryResult
+from repetitive_speech_detector import RepetitiveSpeechDetectorResult
 
 
-# Enum to show the distress score
-class DistressScore(Enum):
-    NONE = 0,
-    LOW = 1,
-    MEDIUM = 2,
-    HIGH = 3
+KWS_WEIGHT = 30
+EMC_WEIGHT = 40
+RSD_WEIGHT = 30
 
 
 # Makes a decision on the distress level depending on the params given
 def make_decision(text,
-                  number_keywords_spotted,
-                  distress_classifier_result,
-                  repetitive_speech_detected):
-    # Calculate score
-    score = 0
+                  kws_result: KeywordSpotterResult,
+                  emc_result: EmotionClassifierBinaryResult,
+                  rsd_result: RepetitiveSpeechDetectorResult):
 
-    score = score + (number_keywords_spotted * 10)
+    kws_score = kws_result.distress_score
+    emc_score = emc_result.distress_score
+    rsd_score = rsd_result.distress_score
 
-    if distress_classifier_result.highest_score > 90:
-        score = score + 70
-    elif distress_classifier_result.highest_score > 80:
-        score = score + 60
-    elif distress_classifier_result.highest_score > 60:
-        score = score + 40
+    score_percentage = 0
 
-    if repetitive_speech_detected:
-        score = score + 20
+    # Get KWS final score
+    if kws_score is DistressScore.LOW:
+        score_percentage += round(KWS_WEIGHT / 3)
+    elif kws_score is DistressScore.MEDIUM:
+        score_percentage += round((KWS_WEIGHT / 3) * 2)
+    elif kws_score is DistressScore.HIGH:
+        score_percentage += round(KWS_WEIGHT)
 
-    result = DistressScore.NONE
+    # Get EMC final score
+    if emc_score is DistressScore.LOW:
+        score_percentage += round(EMC_WEIGHT / 3)
+    elif emc_score is DistressScore.MEDIUM:
+        score_percentage += round((EMC_WEIGHT / 3) * 2)
+    elif emc_score is DistressScore.HIGH:
+        score_percentage += round(EMC_WEIGHT)
 
-    # Decide distress level from score
-    if score > 80:
-        result = DistressScore.HIGH
+    # Get RSD final score
+    if rsd_score is DistressScore.LOW:
+        score_percentage += round(RSD_WEIGHT / 3)
+    elif rsd_score is DistressScore.MEDIUM:
+        score_percentage += round((RSD_WEIGHT / 3) * 2)
+    elif rsd_score is DistressScore.HIGH:
+        score_percentage += round(RSD_WEIGHT)
 
-    if score > 60:
-        result = DistressScore.MEDIUM
+    # Get overall distress score
+    if score_percentage > 80:
+        overall_distress_score = DistressScore.HIGH
+    elif score_percentage > 60:
+        overall_distress_score = DistressScore.MEDIUM
+    elif score_percentage > 40:
+        overall_distress_score = DistressScore.LOW
+    else:
+        overall_distress_score = DistressScore.NONE
 
-    if score > 40:
-        result = DistressScore.LOW
+    save_decision(text, overall_distress_score, score_percentage, kws_result, emc_result, rsd_result)
 
-    save_decision(result, text, number_keywords_spotted, distress_classifier_result, repetitive_speech_detected)
-
-    return result
+    return overall_distress_score
 
 
-# Saves the decision to an XML file
-def save_decision(result, text, number_keywords_spotted, distress_classifier_result, repetitive_speech_detected):
+def save_decision(text, overall_distress_score, score_percentage, kws_result, emc_result, rsd_result):
     current_time = time.time()
 
     root = etree.Element("Result")
 
     # Time
+    etree.SubElement(root, "OverallScore").text = str(overall_distress_score)
+    etree.SubElement(root, "ScorePercentage").text = str(score_percentage)
     etree.SubElement(root, "Time").text = str(current_time)
     etree.SubElement(root, "SpokenText").text = text
 
-    # Emc
-    emc = etree.SubElement(root, "EMC")
-    etree.SubElement(emc, "FirstEmotion").text = distress_classifier_result.highest_name
-    etree.SubElement(emc, "FirstScore").text = str(distress_classifier_result.highest_score)
-    etree.SubElement(emc, "SecondEmotion").text = distress_classifier_result.second_highest_name
-    etree.SubElement(emc, "SecondScore").text = str(distress_classifier_result.second_highest_score)
-
-    # Kws
+    # KWS
     kws = etree.SubElement(root, "KWS")
-    etree.SubElement(kws, "NoSpotted").text = str(number_keywords_spotted)
+    etree.SubElement(kws, "DistressScore").text = str(kws_result.distress_score)
+    etree.SubElement(kws, "ProcessedInput").text = kws_result.processed_input
+    keywords = etree.SubElement(kws, "MatchingKeywords")
+    for keyword in kws_result.matching_keywords:
+        single_keyword = etree.SubElement(keywords, "SingleKeyword")
+        etree.SubElement(single_keyword, "Keyword").text = keyword
+        etree.SubElement(single_keyword, "NoOccurrences").text = str(kws_result.matching_keywords[keyword])
 
-    # Rsd
+    # EMC
+    emc = etree.SubElement(root, "EMC")
+    etree.SubElement(emc, "DistressScore").text = str(emc_result.distress_score)
+    etree.SubElement(emc, "InDistressProba").text = str(emc_result.distress_proba)
+    etree.SubElement(emc, "NoDistressProba").text = str(emc_result.no_distress_proba)
+
+    # RSD
     rsd = etree.SubElement(root, "RSD")
-    etree.SubElement(rsd, "IsRepeated").text = str(repetitive_speech_detected)
-
-    # Decision
-    etree.SubElement(root, "Decision").text = str(result)
+    etree.SubElement(rsd, "DistressScore").text = str(rsd_result.distress_score)
+    etree.SubElement(rsd, "ProcessedInput").text = rsd_result.processed_input
+    matching_sentences = etree.SubElement(rsd, "MatchingSentences")
+    for sentence in rsd_result.matching_sentences:
+        etree.SubElement(matching_sentences, "Sentence").text = sentence
 
     raw = etree.tostring(root, encoding='unicode')
     pretty = xml.dom.minidom.parseString(raw).toprettyxml(indent='    ')

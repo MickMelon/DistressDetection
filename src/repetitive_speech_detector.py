@@ -3,7 +3,11 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from collections import namedtuple
+from distress_score import DistressScore
 
+RepetitiveSpeechDetectorResult = namedtuple("RepetitiveSpeechDetectorResult",
+                                     "distress_score processed_input matching_sentences")
 
 # Text based repetitive speech detector
 class RepetitiveSpeechDetector:
@@ -23,9 +27,7 @@ class RepetitiveSpeechDetector:
                      "But we don’t always randomise enough data and our test data becomes stale and etc. etc."]
 
         for i in range(len(fill_with)):
-            self.backlog.append(self.__remove_stop_words(fill_with[i]))
-
-        print("Filled backlog with " + str(len(self.backlog)) + " sentences")
+            self.backlog.append(self.__preprocess(fill_with[i]))
 
     # Remove stop words from a piece of text
     def __remove_stop_words(self, text):
@@ -61,19 +63,24 @@ class RepetitiveSpeechDetector:
 
     # Interface function, checks if the input is a repeat of what has been previously said
     def check(self, input):
+        if input == "":
+            return RepetitiveSpeechDetectorResult(
+                distress_score=DistressScore.NONE,
+                processed_input=input,
+                matching_sentences=[]
+            )
+
         processed = self.__preprocess(input)
         processed_words = processed.split()
 
-        print(f"Input: {input}")
-        print(f"Processed: {processed}")
-
-        matching_sentences = 0
+        matching_sentences = []
 
         # Compare input with each item in backlog
         for i in range(len(self.backlog)):
             matching_words = 0
             non_matching_words = 0
-            backlog_item_words = self.backlog[i].split()
+            backlog_sentence = self.backlog[i]
+            backlog_item_words = backlog_sentence.split()
 
             # Loop through each word in the backlog item
             for i in range(len(backlog_item_words)):
@@ -85,13 +92,25 @@ class RepetitiveSpeechDetector:
                     non_matching_words += 1
 
             # If 80% of words match, it is a matching sentence
-            per = matching_words * (100/len(backlog_item_words))
-            print(f"Percentage is {per}")
+            per = matching_words * (100 / len(backlog_item_words))
 
             if per > 80:
-                matching_sentences += 1
+                matching_sentences.append(backlog_sentence)
 
         self.backlog.append(processed)
-        self.backlog.remove(self.backlog[0])
 
-        return matching_sentences
+        qty = len(matching_sentences)
+        if qty < 1:
+            score = DistressScore.NONE
+        elif qty < 2:
+            score = DistressScore.LOW
+        elif qty < 3:
+            score = DistressScore.MEDIUM
+        else:
+            score = DistressScore.HIGH
+
+        return RepetitiveSpeechDetectorResult(
+            distress_score=score,
+            processed_input=processed,
+            matching_sentences=matching_sentences
+        )

@@ -12,9 +12,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.ensemble import AdaBoostClassifier
 from enum import Enum
 from collections import namedtuple
+from distress_score import DistressScore
 
-EmotionClassifierResult = namedtuple("EmotionClassifierResult",
-                                     "highest_name highest_score second_highest_name second_highest_score")
+EmotionClassifierBinaryResult = namedtuple("EmotionClassifierBinaryResult",
+                                     "distress_score distress_proba no_distress_proba")
 
 
 # The name of the dataset
@@ -32,7 +33,7 @@ class ClassifierName(Enum):
 
 
 # The emotion classifier implementation class
-class EmotionClassifier:
+class EmotionClassifierBinary:
     # All the available emotions that may be classified
     AVAILABLE_EMOTIONS = {
         "angry",
@@ -270,26 +271,6 @@ class EmotionClassifier:
         print("Accuracy: {:.2f}%".format(accuracy * 100))
 
 
-    def predict_binary(self, input):
-        print("Predicting...")
-        for file in glob.glob(input):
-            features = self.__extract_features(file, mfcc=True, chroma=True, mel=True)
-
-        proba = self.model.predict_proba(features.reshape(1, -1))
-
-        distress_score = round(proba[0][0] * 100, 2)
-        no_distress_score = round(proba[0][1] * 100, 2)
-
-        print(f"Distress score is {distress_score} and no-distress score is {no_distress_score}")
-
-        return EmotionClassifierResult(
-            highest_name="distress",
-            highest_score=distress_score,
-            second_highest_name="no distress",
-            second_highest_score=no_distress_score
-        )
-
-    # Predicts what emotion the input is
     def predict(self, input):
         print("Predicting...")
         for file in glob.glob(input):
@@ -297,34 +278,22 @@ class EmotionClassifier:
 
         proba = self.model.predict_proba(features.reshape(1, -1))
 
-        available_emotions = list(self.AVAILABLE_EMOTIONS)
-        for prod in proba:
-            count = 0
-            highest_score = 0
-            highest_emotion = "none"
+        distress_proba = round(proba[0][0] * 100, 2)
+        no_distress_proba = round(proba[0][1] * 100, 2)
 
-            second_highest_score = 0
-            second_highest_emotion = "none"
+        print(f"Distress score is {distress_proba} and no-distress score is {no_distress_proba}")
 
-            for emotion in prod:
-                current_score = round(emotion * 100, 2)
-                if current_score > highest_score:
-                    highest_score = current_score
-                    highest_emotion = available_emotions[count]
-                elif current_score > second_highest_score:
-                    second_highest_score = current_score
-                    second_highest_emotion = available_emotions[count]
+        if distress_proba > 90:
+            score = DistressScore.HIGH
+        elif distress_proba > 80:
+            score = DistressScore.MEDIUM
+        elif distress_proba > 70:
+            score = DistressScore.LOW
+        else:
+            score = DistressScore.NONE
 
-                count = count + 1
-
-            print("***")
-            print("Predicted %s with a score of %s" % (highest_emotion, str(highest_score)))
-            print("Second highest was %s with a score of %s" % (second_highest_emotion, str(second_highest_score)))
-            print("***")
-
-        return EmotionClassifierResult(
-            highest_name=highest_emotion,
-            highest_score=highest_score,
-            second_highest_name=second_highest_emotion,
-            second_highest_score=second_highest_score
+        return EmotionClassifierBinaryResult(
+            distress_score=score,
+            distress_proba=distress_proba,
+            no_distress_proba=no_distress_proba
         )
