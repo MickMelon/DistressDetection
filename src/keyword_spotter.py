@@ -59,14 +59,14 @@ class KeywordSpotter:
                 else:
                     word_dict[keyword] = 1
 
-        if total_spotted < 2:
-            score = DistressScore.NONE
-        elif total_spotted < 4:
-            score = DistressScore.LOW
-        elif total_spotted < 6:
-            score = DistressScore.MEDIUM
-        else:
+        if total_spotted > 5:
             score = DistressScore.HIGH
+        elif total_spotted > 3:
+            score = DistressScore.MEDIUM
+        elif total_spotted > 1:
+            score = DistressScore.LOW
+        else:
+            score = DistressScore.NONE
 
         return KeywordSpotterResult(
             distress_score=score,

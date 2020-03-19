@@ -94,20 +94,20 @@ class RepetitiveSpeechDetector:
             # If 80% of words match, it is a matching sentence
             per = matching_words * (100 / len(backlog_item_words))
 
-            if per > 80:
+            if per > 60:
                 matching_sentences.append(backlog_sentence)
 
         self.backlog.append(processed)
 
         qty = len(matching_sentences)
-        if qty < 1:
-            score = DistressScore.NONE
-        elif qty < 2:
-            score = DistressScore.LOW
-        elif qty < 3:
-            score = DistressScore.MEDIUM
-        else:
+        if qty > 5:
             score = DistressScore.HIGH
+        elif qty > 3:
+            score = DistressScore.MEDIUM
+        elif qty > 1:
+            score = DistressScore.LOW
+        else:
+            score = DistressScore.NONE
 
         return RepetitiveSpeechDetectorResult(
             distress_score=score,

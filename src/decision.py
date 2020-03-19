@@ -1,6 +1,6 @@
 import xml.etree.cElementTree as etree
 import xml.dom.minidom
-import time
+from datetime import datetime
 from distress_score import DistressScore
 
 from keyword_spotter import KeywordSpotterResult
@@ -50,11 +50,11 @@ def make_decision(text,
         score_percentage += round(RSD_WEIGHT)
 
     # Get overall distress score
-    if score_percentage > 80:
+    if score_percentage > 75:
         overall_distress_score = DistressScore.HIGH
-    elif score_percentage > 60:
+    elif score_percentage > 55:
         overall_distress_score = DistressScore.MEDIUM
-    elif score_percentage > 40:
+    elif score_percentage > 35:
         overall_distress_score = DistressScore.LOW
     else:
         overall_distress_score = DistressScore.NONE
@@ -65,14 +65,14 @@ def make_decision(text,
 
 
 def save_decision(text, overall_distress_score, score_percentage, kws_result, emc_result, rsd_result):
-    current_time = time.time()
+    current_time = f'{datetime.now():%Y-%m-%d %H-%M-%S}'
 
     root = etree.Element("Result")
 
     # Time
     etree.SubElement(root, "OverallScore").text = str(overall_distress_score)
     etree.SubElement(root, "ScorePercentage").text = str(score_percentage)
-    etree.SubElement(root, "Time").text = str(current_time)
+    etree.SubElement(root, "Time").text = current_time
     etree.SubElement(root, "SpokenText").text = text
 
     # KWS
