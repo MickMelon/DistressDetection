@@ -7,7 +7,7 @@ from keyword_spotter import KeywordSpotterResult
 from emotion_classifier_binary import EmotionClassifierBinaryResult
 from repetitive_speech_detector import RepetitiveSpeechDetectorResult
 
-
+# The weighting for each module for the final distress score decision
 KWS_WEIGHT = 30
 EMC_WEIGHT = 40
 RSD_WEIGHT = 30
@@ -19,6 +19,7 @@ def make_decision(text,
                   emc_result: EmotionClassifierBinaryResult,
                   rsd_result: RepetitiveSpeechDetectorResult):
 
+    # Get the score from each module
     kws_score = kws_result.distress_score
     emc_score = emc_result.distress_score
     rsd_score = rsd_result.distress_score
@@ -59,11 +60,15 @@ def make_decision(text,
     else:
         overall_distress_score = DistressScore.NONE
 
+    # Save the decision to XML
     save_decision(text, overall_distress_score, score_percentage, kws_result, emc_result, rsd_result)
 
+    # Return the final overall distress score from the calculated combination
+    # of all the distress modules
     return overall_distress_score
 
 
+# Save the final decision with all details from each distress module
 def save_decision(text, overall_distress_score, score_percentage, kws_result, emc_result, rsd_result):
     current_time = f'{datetime.now():%Y-%m-%d %H-%M-%S}'
 
@@ -99,6 +104,7 @@ def save_decision(text, overall_distress_score, score_percentage, kws_result, em
     for sentence in rsd_result.matching_sentences:
         etree.SubElement(matching_sentences, "Sentence").text = sentence
 
+    # Write to file
     raw = etree.tostring(root, encoding='unicode')
     pretty = xml.dom.minidom.parseString(raw).toprettyxml(indent='    ')
     with open(f'decision_output/{current_time}.xml', 'w') as f:
