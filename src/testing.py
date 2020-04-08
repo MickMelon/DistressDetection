@@ -110,11 +110,8 @@ def test_rsd():
 
     #random.shuffle(dataset)
     for test in dataset:
-        print("***")
-        print(f"Checking {test}")
         result = rsd.check(test)
-        if result.distress_score is not DistressScore.NONE:
-            print(result)
-        else:
-            print("no")
-        print("***")
+        print(result)
+        print(f"Matching sentences: {len(result.matching_sentences)}")
+       # if result.distress_score is not DistressScore.NONE:
+          #  print(result)

@@ -15,11 +15,6 @@ RepetitiveSpeechDetectorResult = namedtuple("RepetitiveSpeechDetectorResult",
 class RepetitiveSpeechDetector:
     backlog = []
 
-    # Construct with auto filled backlog
-    def __init__(self, fill_backlog=False):
-        if fill_backlog:
-            self.__fill_backlog()
-
     # Fill the backlog with test data
     def __fill_backlog(self):
         fill_with = ["The first three are not sentences because they do not contain a verb",
@@ -101,8 +96,9 @@ class RepetitiveSpeechDetector:
 
             # If 60% of words match, it is a matching sentence
             per = matching_words * (100 / len(backlog_item_words))
-            if per > 60:
+            if per >= 60:
                 matching_sentences.append(backlog_sentence)
+           # print(f"Ther per is {per} / matching words: {matching_words} out of {len(backlog_item_words)}")
 
         # Append the processed text to the backlog for future processing
         self.backlog.append(processed)
