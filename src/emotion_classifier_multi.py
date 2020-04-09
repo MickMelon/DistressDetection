@@ -53,6 +53,8 @@ class EmotionClassifierMulti:
     # Trains a new model with the specified dataset and classifier
     @classmethod
     def from_new(cls, save_model=True, dataset=DatasetName.English, classifier=ClassifierName.MLP):
+        print(f"The classifier is {classifier}")
+        return
         instance = cls()
 
         instance.X_train, instance.X_test, instance.y_train, instance.y_test = instance.__load_data(dataset=dataset)
@@ -62,18 +64,18 @@ class EmotionClassifierMulti:
         elif classifier is ClassifierName.AdaBoost:
             instance.model = AdaBoostClassifier(n_estimators=100)
         elif classifier is ClassifierName.NN:
+            print("wat")
             instance.model = NearestNeighbors(n_neighbors=2, algorithm='ball_tree')
         else: # Default classifier will be MLP
-            if classifier is ClassifierName.MLP:
-                model_params = {
-                    'alpha': 0.01,
-                    'batch_size': 256,
-                    'epsilon': 1e-08,
-                    'hidden_layer_sizes': (300,),
-                    'learning_rate': 'adaptive',
-                    'max_iter': 500,
-                }
-                instance.model = MLPClassifier(**model_params)
+            model_params = {
+                'alpha': 0.01,
+                'batch_size': 256,
+                'epsilon': 1e-08,
+                'hidden_layer_sizes': (300,),
+                'learning_rate': 'adaptive',
+                'max_iter': 500,
+            }
+            instance.model = MLPClassifier(**model_params)
         instance.model.fit(instance.X_train, instance.y_train)
 
         if save_model:

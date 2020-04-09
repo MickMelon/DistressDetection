@@ -9,7 +9,9 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import svm
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import accuracy_score
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
 from enum import Enum
 from collections import namedtuple
 from distress_score import DistressScore
@@ -25,12 +27,13 @@ class DatasetName(Enum):
     Ravdess = 1
 
 
-# The name of the classifier
-class ClassifierName(Enum):
-    MLP = 0,
-    SVM = 1,
-    AdaBoost = 2,
-    NN = 3
+MULTI_LAYER_PERCEPTRON = "MultiLayerPerceptron"
+SUPPORT_VECTOR_MACHINE = "SupportVectorMachine"
+ADA_BOOST = "AdaBoost"
+NEURAL_NETWORK = "NeuralNetwork"
+DECISION_TREE = "DecisionTree"
+RANDOM_FOREST = "RandomForest"
+GAUSSIAN_NB = "GaussianNB"
 
 
 # The emotion classifier implementation class
@@ -55,7 +58,7 @@ class EmotionClassifierBinary:
 
     # Trains a new model with the specified dataset and classifier
     @classmethod
-    def from_new(cls, save_model=True, dataset=DatasetName.English, classifier=ClassifierName.MLP):
+    def from_new(cls, save_model=True, dataset=DatasetName.English, classifier=MULTI_LAYER_PERCEPTRON):
         # Create a new class instance
         instance = cls()
 
@@ -63,23 +66,41 @@ class EmotionClassifierBinary:
         instance.X_train, instance.X_test, instance.y_train, instance.y_test = instance.__load_data(dataset=dataset)
 
         # Check which classifier was specified and create the object from it
-        if classifier is ClassifierName.SVM:
+
+        # Support Vector Machine
+        if classifier is SUPPORT_VECTOR_MACHINE:
             instance.model = svm.SVC()
-        elif classifier is ClassifierName.AdaBoost:
+        # AdaBoost
+        elif classifier is ADA_BOOST:
             instance.model = AdaBoostClassifier(n_estimators=100)
-        elif classifier is ClassifierName.NN:
+        # Neural Network
+        elif classifier is NEURAL_NETWORK:
             instance.model = NearestNeighbors(n_neighbors=2, algorithm='ball_tree')
-        else: # Default classifier will be MLP
-            if classifier is ClassifierName.MLP:
-                model_params = {
-                    'alpha': 0.01,
-                    'batch_size': 256,
-                    'epsilon': 1e-08,
-                    'hidden_layer_sizes': (300,),
-                    'learning_rate': 'adaptive',
-                    'max_iter': 500,
-                }
-                instance.model = MLPClassifier(**model_params)
+        # Decision Tree
+        elif classifier is DECISION_TREE:
+            instance.model = DecisionTreeClassifier(max_depth=5)
+        # Random Forest
+        elif classifier is RANDOM_FOREST:
+            instance.model = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
+        # GaussianNB
+        elif classifier is GAUSSIAN_NB:
+            instance.model = GaussianNB()
+        # Multi Layer Perceptron
+        elif classifier is MULTI_LAYER_PERCEPTRON:
+            model_params = {
+                'alpha': 0.01,
+                'batch_size': 256,
+                'epsilon': 1e-08,
+                'hidden_layer_sizes': (300,),
+                'learning_rate': 'adaptive',
+                'max_iter': 500,
+            }
+            instance.model = MLPClassifier(**model_params)
+        else:
+            raise Exception("Invalid classifier specified")
+
+        if not hasattr(instance, 'model'):
+            raise Exception(f"No model created for some reason. Classifier: {classifier}")
 
         # Train the specified classifier with the specified dataset
         instance.model.fit(instance.X_train, instance.y_train)
@@ -300,9 +321,12 @@ class EmotionClassifierBinary:
     # Carry out prediction on a set of features
     def predict_set(self, X_test, y_test):
         y_pred = self.model.predict(X_test)
+
+
+        #proba = self.model.predict_proba(X_test.reshape(1, -1))
+        #print(proba)
         accuracy = accuracy_score(y_true=y_test, y_pred=y_pred)
         print("Accuracy: {:.2f}%".format(accuracy * 100))
-
 
     # Predict a single file
     def predict(self, input):

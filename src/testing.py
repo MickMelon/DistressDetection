@@ -1,15 +1,13 @@
+import emotion_classifier_binary
 from emotion_classifier_binary import EmotionClassifierBinary
-from emotion_classifier_multi import ClassifierName
 from emotion_classifier_multi import EmotionClassifierMulti
 from repetitive_speech_detector import RepetitiveSpeechDetector
 from keyword_spotter import KeywordSpotter
 from collections import Counter
-import random
-from distress_score import DistressScore
 
 
 def train_model():
-    EmotionClassifierBinary.from_new()
+    EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.SUPPORT_VECTOR_MACHINE)
 
 def test_model():
     emc = EmotionClassifierBinary.from_existing('models/mlp_classifier.model')
@@ -24,29 +22,82 @@ def test_classifiers():
     svm_average = 0
     mlp_average = 0
     ada_average = 0
+    gnb_average = 0
+    forest_average = 0
+    tree_average = 0
+    nn_average = 0
 
-    for i in range(5):
-        svm = EmotionClassifierMulti.from_new(classifier=ClassifierName.SVM)
-        svm_result = svm.test()
-        print(f"SVM Result: {str(svm_result)}")
-        svm_average += svm_result
+    try:
+        for i in range(5):
+            svm = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.SUPPORT_VECTOR_MACHINE)
+            svm_result = svm.test()
+            print(f"SVM Result: {str(svm_result)}")
+            svm_average += svm_result
+    except:
+        print("SVM issue")
 
-    for i in range(5):
-        mlp = EmotionClassifierMulti.from_new(classifier=ClassifierName.MLP)
-        mlp_result = mlp.test()
-        print(f"MLP Result: {str(mlp_result)}")
-        mlp_average += mlp_result
+    try:
+        for i in range(5):
+            mlp = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.MULTI_LAYER_PERCEPTRON)
+            mlp_result = mlp.test()
+            print(f"MLP Result: {str(mlp_result)}")
+            mlp_average += mlp_result
+    except:
+        print("MLP issue")
 
-    for i in range(5):
-        ada = EmotionClassifierMulti.from_new(classifier=ClassifierName.AdaBoost)
-        ada_result = ada.test()
-        print(f"AdaBoost Result: {str(ada_result)}")
-        ada_average += ada_result
+    try:
+        for i in range(5):
+            ada = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.ADA_BOOST)
+            ada_result = ada.test()
+            print(f"AdaBoost Result: {str(ada_result)}")
+            ada_average += ada_result
+    except:
+        print("Ada issue")
+
+    try:
+        for i in range(5):
+            gnb = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.GAUSSIAN_NB)
+            gnb_result = gnb.test()
+            print(f"GaussianNB Result: {str(gnb_result)}")
+            gnb_average += gnb_result
+    except:
+        print("GNB issue")
+
+    try:
+        for i in range(5):
+            forest = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.RANDOM_FOREST)
+            forest_result = forest.test()
+            print(f"Forest Result: {str(forest_result)}")
+            forest_average += forest_result
+    except:
+        print("Forest issue")
+
+    try:
+        for i in range(5):
+            tree = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.DECISION_TREE)
+            tree_result = tree.test()
+            print(f"Tree Result: {str(tree_result)}")
+            tree_average += tree_result
+    except:
+        print("Tree issue")
+
+    try:
+        for i in range(5):
+            nn = EmotionClassifierBinary.from_new(classifier=emotion_classifier_binary.NEURAL_NETWORK)
+            nn_result = nn.test()
+            print(f"NN Result: {str(nn_result)}")
+            nn_average += nn_result
+    except:
+        print("NN issue")
 
     print("DONE")
-    print(f"SVM Average: {str(svm_average / 5)}")
-    print(f"MLP Average: {str(mlp_average / 5)}")
-    print(f"AdaBoost Average: {str(ada_average / 5)}")
+    print(f"SVM Average: {str(svm_average / 5)}%")
+    print(f"MLP Average: {str(mlp_average / 5)}%")
+    print(f"AdaBoost Average: {str(ada_average / 5)}%")
+    print(f"Gaussian Average: {str(gnb_average / 5)}%")
+    print(f"Forest Average: {str(forest_average / 5)}%")
+    print(f"Tree Average: {str(tree_average / 5)}%")
+    print(f"NN Average: {str(nn_average / 5)}%")
 
 
 def test_rsd():
