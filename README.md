@@ -1,7 +1,6 @@
 # Speech Distress Detection Program
-Michael McMillan - 1800833
 
-Abertay University Honours Project
+University Honours Project
 
 How Effective is Speech Analysis in Detecting a Dementia Patient in Distress?
 
