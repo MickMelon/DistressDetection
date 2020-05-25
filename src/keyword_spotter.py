@@ -19,7 +19,18 @@ class KeywordSpotter:
 
     # Construct a keyword spotter with some test keywords
     def __init__(self):
-        self.keywords = ["background", "depth", "large", "stockings", "john", "keyword", "test", "sell"]
+        self.keywords = [
+            "background",
+            "depth",
+            "large",
+            "stockings",
+            "john",
+            "keyword",
+            "test",
+            "sell",
+            "bloody",
+            "fuck",
+            "damn"]
 
     # Construct a keyword spotter with specified keywords
     def set_keywords(self, keywords):
@@ -105,6 +116,7 @@ class KeywordSpotter:
         # Count how many times each keyword appears in the text
         for keyword in self.keywords:
             word_dict[keyword] = split_text.count(keyword.lower())
+            total_spotted += word_dict[keyword]
 
         # Calculate the distress score
         if total_spotted > 5:

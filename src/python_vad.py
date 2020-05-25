@@ -68,7 +68,7 @@ def start():
                      rate=RATE,
                      input=True,
                      start=False,
-                     input_device_index=2,
+                     input_device_index=1,
                      frames_per_buffer=CHUNK_SIZE)
 
     got_a_sentence = False

@@ -5,6 +5,18 @@ Abertay University Honours Project
 
 How Effective is Speech Analysis in Detecting a Dementia Patient in Distress?
 
+## Description
+
+The number of dementia patients is increasing in an ever-growing population causing a rise in NHS costs and care time. Emerging technologies are being used to enhance care to allow a person to live at home for longer. How can these systems be improved by using speech analysis to detect a dementia patient in distressand to what extent would speech analysis be effective?
+
+This project aimedto improve assistive living environments by developing a prototype system that will use speech analysis to identify common audible signs of distress in the speech of a dementia patient.
+
+The prototype system developed incorporated text analysis and machine learning techniques to detect common audible distress symptomsdisplayed by a dementia patient. Three distress detection modules were created: keyword spotting, repetitive speech detection, and emotion classification. The former two worked from text outputted by speech recognition whilst the later used machine learning techniques. Each module was executed after voice activity was detected from a microphone input before giving their own distress scores to a decision system which used module weightings to decide the overall distress score.
+
+Due to ethical testing limitations, the system was tested on various datasets and sources that do not contain genuinely distressful sounds, with the aim of proving the concept that distress can indeed be detected in the speech of a dementia patient. This concept was proven as specific words such as a carer's name or swear words, repetitive phrases and questioning, and negative emotions could all be detected with a reasonably high accuracy. 
+
+The results have shown that this is a very prospecting area that should be further investigated, ideally with real world trials. Additional modules could be added, for example detection of phrases containing greater than one word and repetitive keyword detection.Further investigation on various feature extraction methods and pre-processing steps would be beneficial in improving the emotion classification aspect. The main priority for future work would be to work closely with dementia patients and their carers to gather a more personal insight and to conduct tests on real-world scenarios in which a dementia patient is undergoing genuine distress.
+
 ## Contents
 
 - `decision_output/` - This folder contains all the XML files outputted by the decision system.
